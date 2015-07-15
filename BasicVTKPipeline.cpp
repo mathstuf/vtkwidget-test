@@ -1,7 +1,7 @@
 #include <QApplication>
 
 #include <vtkAutoInit.h>
-VTK_MODULE_INIT(vtkRenderingOpenGL);
+VTK_MODULE_INIT(vtkRenderingOpenGL2);
 VTK_MODULE_INIT(vtkInteractionStyle);
 
 #include <vtkSmartPointer.h>
@@ -13,7 +13,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <vtkInteractorStyleImage.h>
 #include <vtkRenderer.h>
 #include <vtkJPEGReader.h>
-// #include <QVTKWidget.h>
+#include <QVTKWidget.h>
 #include <QVTKWidget2.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 
@@ -25,16 +25,14 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    // QVTKWidget widget;
-    QVTKWidget2 widget;
-    widget.resize(1024,1024);
+    //QVTKWidget widget;
 
     // Setup sphere
     vtkSmartPointer<vtkConeSource> coneSource =
         vtkSmartPointer<vtkConeSource>::New();
     coneSource->Update();
 
-    coneSource->SetResolution(500);
+    coneSource->SetResolution(5);
 
     vtkSmartPointer<vtkPolyDataMapper> coneMapper =
         vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -57,8 +55,14 @@ int main(int argc, char *argv[])
 
 
     // Setup window
-    vtkSmartPointer<vtkRenderWindow> renderWindow =
-        vtkSmartPointer<vtkRenderWindow>::New();
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow =
+        vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    renderWindow->DoubleBufferOn();
+    renderWindow->AlphaBitPlanesOn();
+    renderWindow->SetAlphaBitPlanes(8);
+
+    QVTKWidget2 widget(renderWindow.GetPointer());
+    widget.resize(1024,1024);
 
     // Setup renderer
     vtkSmartPointer<vtkRenderer> renderer =
